@@ -1,6 +1,7 @@
-module EX_MEM(clk_i, rst_i, start_i, RegWrite_i, MemReg_i, MemRead_i, MemWrite_i, ALUResult_i, start_o, RegWrite_o, MemReg_o, MemRead_o, MemWrite_o, rs2_data_i, rd_addr_i, rd_addr_o, ALUResult_o, MemData_o);
+module EX_MEM(MemStall_i, clk_i, rst_i, start_i, RegWrite_i, MemReg_i, MemRead_i, MemWrite_i, ALUResult_i, start_o, RegWrite_o, MemReg_o, MemRead_o, MemWrite_o, rs2_data_i, rd_addr_i, rd_addr_o, ALUResult_o, MemData_o);
 
 //Ports
+input MemStall_i;
 input clk_i;
 input rst_i;
 input start_i;

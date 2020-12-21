@@ -1,6 +1,7 @@
-module MEM_WB(clk_i, rst_i, start_i, RegWrite_i, MemReg_i, rd_addr_i, RegWrite_o, MemReg_o, data1_i, data2_i, data1_o, data2_o, rd_addr_o);
+module MEM_WB(MemStall_i, clk_i, rst_i, start_i, RegWrite_i, MemReg_i, rd_addr_i, RegWrite_o, MemReg_o, data1_i, data2_i, data1_o, data2_o, rd_addr_o);
 
 //Ports
+input MemStall_i;
 input clk_i;
 input rst_i;
 input start_i;

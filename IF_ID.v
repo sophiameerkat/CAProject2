@@ -1,6 +1,7 @@
-module IF_ID (clk, rst_i, start_i, start_o, PC_i, PC_o, IF_stall, IF_flush, instruction_i, instruction_o);
+module IF_ID (MemStall_i, clk, rst_i, start_i, start_o, PC_i, PC_o, IF_stall, IF_flush, instruction_i, instruction_o);
 
 //Ports
+input MemStall_i;
 input clk;
 input rst_i;
 input start_i;

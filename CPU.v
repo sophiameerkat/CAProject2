@@ -15,6 +15,7 @@ wire [31:0] PCNext_pre, PCNext, PCCurrent, PCBranch;
 wire PCWrite;
 wire BranchTaken;
 wire [31:0] Instruction_pre;
+wire MemStall;
 
 PC_Adder PC_Adder(
     .data1_in   (PCCurrent),
@@ -35,7 +36,8 @@ PC PC(
     .start_i    (start_i),
     .PCWrite_i  (PCWrite),
     .pc_i       (PCNext_pre),
-    .pc_o       (PCCurrent)
+    .pc_o       (PCCurrent),
+    .MemStall_i   (MemStall)
 );
 
 Instruction_Memory Instruction_Memory(
@@ -58,7 +60,8 @@ IF_ID IF_ID(
     .IF_stall   (IFStall),
     .IF_flush   (BranchTaken),
     .instruction_i  (Instruction_pre),
-    .instruction_o  (Instruction)
+    .instruction_o  (Instruction),
+    .MemStall_i   (MemStall)
 );
 
 wire [4:0] RegisterReadAddr1, RegisterReadAddr2;
@@ -194,6 +197,7 @@ ID_EX ID_EX(
     //others
     .funct_i     (Funct_IF_IDtoID_EX),
     .imm_i   (SignExtensionOut),
+    .MemStall_i   (MemStall)
 
     .start_o    (start_ID_EXtoEX_MEM),
     .RegWrite_o  (RegWrite_ID_EXtoEX_MEM),
@@ -295,12 +299,14 @@ EX_MEM EX_MEM (
     .rd_addr_i  (RD_ID_EXtoEX_MEM), 
     .rd_addr_o  (RD_EX_MEMtoMEM_WB), 
     .ALUResult_o    (ALUResult_EX_MEMtoDM), 
-    .MemData_o  (RS2data_EXMEMtoDM)
+    .MemData_o  (RS2data_EXMEMtoDM),
+    .MemStall_i   (MemStall)
 );
 
 //Wires for MEM Stage
 wire [31:0] ReadData_DMtoMEM_WB;
 
+/*
 Data_Memory Data_Memory (
     .clk_i  (clk_i), 
     .addr_i     (ALUResult_EX_MEMtoDM), 
@@ -309,6 +315,7 @@ Data_Memory Data_Memory (
     .data_i     (RS2data_EXMEMtoDM),
     .data_o     (ReadData_DMtoMEM_WB)
 );
+*/
 
 //Wires for MEM_WB Stage
 wire	    MemtoReg_MEM_WBtoWBMUX;
@@ -328,7 +335,8 @@ MEM_WB MEM_WB(
     .data2_i    (ReadData_DMtoMEM_WB), 
     .data1_o    (ALUResult_MEM_WBtoWBMux), 
     .data2_o    (ReadData_MEM_WBtoWBMux), 
-    .rd_addr_o  (RDaddr_MEM_WBtoRegs)
+    .rd_addr_o  (RDaddr_MEM_WBtoRegs),
+    .MemStall_i   (MemStall)
 );
 
 MUX32 MUX_WB(
@@ -338,5 +346,37 @@ MUX32 MUX_WB(
     .data_o     (RDdata_MEM_WBtoRegs)
 );
 
-endmodule
 
+//Project 2 part
+
+dcache_sram dcache_sram(
+    .clk_i  (),
+    .rst_i  (),
+    .addr_i     (),
+    .tag_i  (),
+    .data_i     (),
+    .enable_i   (),
+    .write_i    (),
+    .tag_o  (),
+    .data_o     (),
+    .hit_o  ()
+);
+
+dcache_controller dcache_controller(
+    .clk_i  (), 
+    rst_i   (),    
+    mem_data_i  (), 
+    mem_ack_i   (),     
+    mem_data_o  (), 
+    mem_addr_o  (),     
+    mem_enable_o    (), 
+    mem_write_o     (), 
+    cpu_data_i  (), 
+    cpu_addr_i  (),     
+    cpu_MemRead_i   (), 
+    cpu_MemWrite_i  (), 
+    cpu_data_o  (), 
+    cpu_stall_o     ()
+);
+
+endmodule

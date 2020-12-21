@@ -1,5 +1,6 @@
 module ID_EX
 (
+	MemStall_i,
 	clk_i,
 	rst_i,
 	start_i,
@@ -38,6 +39,7 @@ module ID_EX
 	imm_o
 );
 
+input MemStall_i;
 input clk_i;
 input rst_i;
 input start_i;
