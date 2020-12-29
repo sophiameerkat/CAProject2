@@ -26,14 +26,17 @@ always @(posedge clk_i or posedge rst_i) begin
 	if(rst_i) begin
 		{ RegWrite_o, MemReg_o, rd_addr_o, data1_o, data2_o } = 0;
 	end
-	else begin
-		if(start_i == 1) begin
-			RegWrite_o <= RegWrite_i;
-			MemReg_o <= MemReg_i;
-			rd_addr_o <= rd_addr_i;
-			data1_o <= data1_i;
-			data2_o <= data2_i;
-		end
+
+	else if(MemStall_i) begin
+		//do nothing
+	end
+
+	else if(start_i == 1) begin
+		RegWrite_o <= RegWrite_i;
+		MemReg_o <= MemReg_i;
+		rd_addr_o <= rd_addr_i;
+		data1_o <= data1_i;
+		data2_o <= data2_i;
 	end
 end
 endmodule

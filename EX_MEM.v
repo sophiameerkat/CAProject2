@@ -28,17 +28,20 @@ always @(posedge clk_i or posedge rst_i) begin
 	if(rst_i) begin
 		{ RegWrite_o, MemReg_o, MemRead_o, MemWrite_o, rd_addr_o, ALUResult_o, MemData_o } <= 0;
 	end
-	else begin
-		if(start_i == 1) begin
-			start_o <= start_i;
-			RegWrite_o <= RegWrite_i;
-			MemReg_o <= MemReg_i;
-			MemRead_o <= MemRead_i;
-			MemWrite_o <= MemWrite_i;
-			rd_addr_o <= rd_addr_i;
-			ALUResult_o <= ALUResult_i;
-			MemData_o <= rs2_data_i;
-		end
+	
+	else if(MemStall_i) begin
+			//do nothing
+	end
+	
+	else if(start_i == 1) begin
+		start_o <= start_i;
+		RegWrite_o <= RegWrite_i;
+		MemReg_o <= MemReg_i;
+		MemRead_o <= MemRead_i;
+		MemWrite_o <= MemWrite_i;
+		rd_addr_o <= rd_addr_i;
+		ALUResult_o <= ALUResult_i;
+		MemData_o <= rs2_data_i;
 	end
 end
 endmodule

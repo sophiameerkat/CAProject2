@@ -348,35 +348,32 @@ MUX32 MUX_WB(
 
 
 //Project 2 part
+//wires for dcache sram & controller
 
-dcache_sram dcache_sram(
-    .clk_i  (),
-    .rst_i  (),
-    .addr_i     (),
-    .tag_i  (),
-    .data_i     (),
-    .enable_i   (),
-    .write_i    (),
-    .tag_o  (),
-    .data_o     (),
-    .hit_o  ()
-);
+/*Data_Memory Data_Memory (
+    .clk_i  (clk_i), 
+    .addr_i     (ALUResult_EX_MEMtoDM), 
+    .MemRead_i  (MemRead_EX_MEMtoDM),
+    .MemWrite_i     (MemWrite_EX_MEMtoDM),
+    .data_i     (RS2data_EXMEMtoDM),
+    .data_o     (ReadData_DMtoMEM_WB)
+);*/
 
 dcache_controller dcache_controller(
-    .clk_i  (), 
-    rst_i   (),    
-    mem_data_i  (), 
-    mem_ack_i   (),     
-    mem_data_o  (), 
-    mem_addr_o  (),     
-    mem_enable_o    (), 
-    mem_write_o     (), 
-    cpu_data_i  (), 
-    cpu_addr_i  (),     
-    cpu_MemRead_i   (), 
-    cpu_MemWrite_i  (), 
-    cpu_data_o  (), 
-    cpu_stall_o     ()
+    .clk_i  (clk_i), 
+    .rst_i   (rst_i),    
+    .mem_data_i  (RS2data_EXMEMtoDM), 
+    .mem_ack_i   (),     
+    .mem_data_o  (ReadData_DMtoMEM_WB), 
+    .mem_addr_o  (),     
+    .mem_enable_o    (), 
+    .mem_write_o     (), 
+    .cpu_data_i  (), 
+    .cpu_addr_i  (),     
+    .cpu_MemRead_i   (), 
+    .cpu_MemWrite_i  (), 
+    .cpu_data_o  (), 
+    .cpu_stall_o     ()
 );
 
 endmodule

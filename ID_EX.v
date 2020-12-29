@@ -92,35 +92,38 @@ always @(posedge clk_i or posedge rst_i) begin
 	if(rst_i) begin
 		{ start_o, RegWrite_o, MemtoReg_o, MemRead_o, MemWrite_o, ALUOp_o, ALUSrc_o, reg1Data_o, reg2Data_o, rs1_o, rs2_o, rd_o, funct_o, imm_o } <= 0;
 	end
-	else begin
-		if(start_i == 1) begin
-			start_o = start_i;
-			if(NoOp_i == 1) begin
-				RegWrite_o <= 0;
-				MemtoReg_o <= 0;
-				MemRead_o <= 0;
-				MemWrite_o <= 0;
-				ALUOp_o <= 0;
-				ALUSrc_o <= 0;
-			end
 
-			else begin
-				RegWrite_o <= RegWrite_i;
-				MemtoReg_o <= MemtoReg_i;
-				MemRead_o <= MemRead_i;
-				MemWrite_o <= MemWrite_i;
-				ALUOp_o <= ALUOp_i;
-				ALUSrc_o <= ALUSrc_i;
-			end	
+	else if(MemStall_i) begin
+			//do nothing
+	end
 
-			reg1Data_o <= reg1Data_i;
-			reg2Data_o <= reg2Data_i;
-			rs1_o <= rs1_i;
-			rs2_o <= rs2_i;
-			rd_o <= rd_i;
-			funct_o <= funct_i;
-			imm_o <= imm_i;		
+	else if(start_i) begin
+		start_o = start_i;
+		if(NoOp_i == 1) begin
+			RegWrite_o <= 0;
+			MemtoReg_o <= 0;
+			MemRead_o <= 0;
+			MemWrite_o <= 0;
+			ALUOp_o <= 0;
+			ALUSrc_o <= 0;
 		end
+
+		else begin
+			RegWrite_o <= RegWrite_i;
+			MemtoReg_o <= MemtoReg_i;
+			MemRead_o <= MemRead_i;
+			MemWrite_o <= MemWrite_i;
+			ALUOp_o <= ALUOp_i;
+			ALUSrc_o <= ALUSrc_i;
+		end	
+
+		reg1Data_o <= reg1Data_i;
+		reg2Data_o <= reg2Data_i;
+		rs1_o <= rs1_i;
+		rs2_o <= rs2_i;
+		rd_o <= rd_i;
+		funct_o <= funct_i;
+		imm_o <= imm_i;		
 	end
 end
 

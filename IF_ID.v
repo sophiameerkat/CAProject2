@@ -22,22 +22,25 @@ always @(posedge clk or posedge rst_i) begin
 	if(rst_i) begin
 		{ start_o, PC_o, instruction_o } = 0;
 	end 
-	else begin
-		if(start_i == 1) begin
-			start_o = start_i;
-			if(IF_flush) begin
-				PC_o <= 32'b0;
-				instruction_o <= 32'b0;
-			end
 
-			else if(IF_stall) begin
-				//do nothing
-			end
+	else if(MemStall_i) begin
+		//do nothing
+	end
 
-			else begin
-				PC_o <= PC_i;
-				instruction_o <= instruction_i;
-			end
+	else if(start_i == 1) begin
+		start_o = start_i;
+		if(IF_flush) begin
+			PC_o <= 32'b0;
+			instruction_o <= 32'b0;
+		end
+
+		else if(IF_stall) begin
+			//do nothing
+		end
+
+		else begin
+			PC_o <= PC_i;
+			instruction_o <= instruction_i;
 		end
 	end
 end
