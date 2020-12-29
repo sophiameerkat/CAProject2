@@ -37,7 +37,7 @@ PC PC(
     .PCWrite_i  (PCWrite),
     .pc_i       (PCNext_pre),
     .pc_o       (PCCurrent),
-    .MemStall_i   (MemStall)
+    .stall_i   (MemStall)
 );
 
 Instruction_Memory Instruction_Memory(
@@ -305,17 +305,6 @@ EX_MEM EX_MEM (
 
 //Wires for MEM Stage
 wire [31:0] ReadData_DMtoMEM_WB;
-
-/*
-Data_Memory Data_Memory (
-    .clk_i  (clk_i), 
-    .addr_i     (ALUResult_EX_MEMtoDM), 
-    .MemRead_i  (MemRead_EX_MEMtoDM),
-    .MemWrite_i     (MemWrite_EX_MEMtoDM),
-    .data_i     (RS2data_EXMEMtoDM),
-    .data_o     (ReadData_DMtoMEM_WB)
-);
-*/
 
 //Wires for MEM_WB Stage
 wire	    MemtoReg_MEM_WBtoWBMUX;

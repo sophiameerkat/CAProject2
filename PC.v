@@ -1,6 +1,5 @@
 module PC
 (
-    MemStall_i,
     clk_i,
     rst_i,
     start_i,
@@ -11,7 +10,6 @@ module PC
 );
 
 // Ports
-input               MemStall_i;
 input               clk_i;
 input               rst_i;
 input               start_i;

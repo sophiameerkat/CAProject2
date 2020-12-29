@@ -8,13 +8,13 @@ reg                Reset;
 integer            i, j, outfile, outfile2, counter;
 reg                flag;
 reg        [26:0]  address;
-reg        [23:0]  tag;
+reg        [24:0]  tag;
 reg        [3:0]   index;
 
-wire    [256-1:0]  mem_cpu_data; 
+wire    [255:0]    mem_cpu_data; 
 wire               mem_cpu_ack;     
-wire    [256-1:0]  cpu_mem_data; 
-wire    [32-1:0]   cpu_mem_addr;     
+wire    [255:0]    cpu_mem_data; 
+wire    [31:0]     cpu_mem_addr;     
 wire               cpu_mem_enable; 
 wire               cpu_mem_write; 
 parameter          num_cycles = 200;
@@ -98,8 +98,9 @@ initial begin
     Data_Memory.memory[0] = 256'h0000_1111_2222_3333_4444_5555_6666_7777_8888_9999_AAAA_BBBB_CCCC_DDDD_EEEE_FFFF;
     Data_Memory.memory[1] = 256'h8888_9999_AAAA_BBBB_CCCC_DDDD_EEEE_FFFF_7777_6666_5555_4444_3333_2222_1111_0000;
     Data_Memory.memory[2] = 256'hECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA_ECFA;
-    Data_Memory.memory[3] = 256'h0123_4567_89AB_CDEF_FEDC_BA98_7654_3210_0123_4567_89AB_CDEF_FEDC_BA98_7654_3210;
-    Data_Memory.memory[32] = 256'h1001_2002_3003_4004_5005_6006_7007_8008_9009_A00A_B00B_C00C_D00D_E00E_F00F;
+    Data_Memory.memory[16] = 256'h0123_4567_89AB_CDEF_FEDC_BA98_7654_3210_0123_4567_89AB_CDEF_FEDC_BA98_7654_3210;
+    Data_Memory.memory[17] = 256'h0000_0110_0220_0330_0440_0550_0660_0770_0880_0990_0AA0_0BB0_0CC0_0DD0_0EE0_0FF0;
+    Data_Memory.memory[32] = 256'h0000_1001_2002_3003_4004_5005_6006_7007_8008_9009_A00A_B00B_C00C_D00D_E00E_F00F;
     // [D-MemoryInitialization] DO NOT REMOVE THIS FLAG !!!
 
 end
@@ -112,7 +113,8 @@ always@(posedge Clk) begin
                 tag = CPU.dcache.dcache_sram.tag[i][j];
                 index = i;
                 address = {tag[22:0], index};
-                Data_Memory.memory[address] = CPU.dcache.dcache_sram.data[i][j];
+                if (tag[24])
+                    Data_Memory.memory[address] = CPU.dcache.dcache_sram.data[i][j];
             end 
         end
     end
