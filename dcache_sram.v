@@ -31,7 +31,7 @@ reg      [24:0]    tag [0:15][0:1];
 reg      [255:0]   data[0:15][0:1];
 
 integer            i, j;
-
+integer last;
 
 // Write Data      
 // 1. Write hit
@@ -47,10 +47,55 @@ always@(posedge clk_i or posedge rst_i) begin
     end
     if (enable_i && write_i) begin
         // TODO: Handle your write of 2-way associative cache + LRU here
+        if (data[addr_i][0] == 0) begin //block 0 is available to use
+            data[addr_i][0] <= data_i;
+            tag[addr_i][0] <= tag_i[22:0];
+            last = 0;
+        end
+        else if (data[addr_i][1] == 0) begin //block 1 is available to use
+            data[addr_i][1] <= data_i;
+            tag[addr_i][1] <= tag_i[22:0];
+            last = 1;
+        end
+        else begin //block 0 and 1 are not available to use => LRU
+            if (last == 1) begin
+                data[addr_i][0] <= data_i;
+                tag[addr_i][0] <= tag_i[22:0];
+                last = 0;
+            end
+            else begin
+                data[addr_i][1] <= data_i;
+                tag[addr_i][1] <= tag_i[22:0];
+                last = 1;
+            end
+        end
     end
 end
 
 // Read Data      
 // TODO: tag_o=? data_o=? hit_o=?
-
+if (enable_i == 0) begin
+    // (valid bit of the input == 1 and tag of input == tag address for block 0) or (valid bit of the input == 1 and tag of input == tag address for block 1) => hit
+    if ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) || (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1])) begin
+        hit_o <= 1'b1;
+        if (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) begin // valid bit of the input == 1 and tag of input == tag address for block 0
+            data_o <= data[addr_i][0];
+            tag_o <= tag_i[24:23]+tag[addr_i][0];
+        end
+        else if (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1]) begin // valid bit of the input == 1 and tag of input == tag address for block 1
+            data_o <= data[addr_i][1];
+            tag_o <= tag_i[24:23]+tag[addr_i][1];
+        end
+    end
+    else begin // does not hit
+        data_o <= 256'b0;
+        tag_o <= 25'b0;
+        hit_o <= 1'b0;
+    end
+end
+else begin // enable is zero
+    data_o <= 256'b0;
+    tag_o <= 25'b0;
+    hit_o <= 1'b0;
+end
 endmodule
