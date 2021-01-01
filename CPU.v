@@ -2,13 +2,27 @@ module CPU
 (
     clk_i, 
     rst_i,
-    start_i
+    start_i,
+    mem_data_i, 
+    mem_ack_i,     
+    mem_data_o, 
+    mem_addr_o,     
+    mem_enable_o, 
+    mem_write_o
 );
 
 // Ports
 input               clk_i;
 input               rst_i;
 input               start_i;
+//Project 2
+input               mem_data_i;
+input               mem_ack_i;     
+output               mem_data_o;
+output               mem_addr_o;     
+output               mem_enable_o;
+output               mem_write_o;
+
 
 //Wires for IF Stage
 wire [31:0] PCNext_pre, PCNext, PCCurrent, PCBranch;
@@ -321,7 +335,7 @@ MEM_WB MEM_WB(
     .RegWrite_o     (RegWrite_MEM_WBtoRegs), 
     .MemReg_o   (MemtoReg_MEM_WBtoWBMUX), 
     .data1_i    (ALUResult_EX_MEMtoDM), 
-    .data2_i    (ReadData_DMtoMEM_WB), 
+    .data2_i    (dcache_readData),
     .data1_o    (ALUResult_MEM_WBtoWBMux), 
     .data2_o    (ReadData_MEM_WBtoWBMux), 
     .rd_addr_o  (RDaddr_MEM_WBtoRegs),
@@ -348,21 +362,34 @@ MUX32 MUX_WB(
     .data_o     (ReadData_DMtoMEM_WB)
 );*/
 
+//wires for DM and cache
+wire [255:0] mem_data;
+wire [31:0] mem_addr;
+wire mem_enable;
+wire mem_write;
+wire [31:0] dcache_readData;
+
+assign mem_data_o = mem_data;
+assign mem_addr_o = mem_addr;
+assign mem_enable_o = mem_enable;
+assign mem_write_o = mem_write;
+
+
 dcache_controller dcache_controller(
     .clk_i  (clk_i), 
     .rst_i   (rst_i),    
-    .mem_data_i  (RS2data_EXMEMtoDM), 
-    .mem_ack_i   (),     
-    .mem_data_o  (ReadData_DMtoMEM_WB), 
-    .mem_addr_o  (),     
-    .mem_enable_o    (), 
-    .mem_write_o     (), 
-    .cpu_data_i  (), 
-    .cpu_addr_i  (),     
-    .cpu_MemRead_i   (), 
-    .cpu_MemWrite_i  (), 
-    .cpu_data_o  (), 
-    .cpu_stall_o     ()
+    .mem_data_i  (mem_data_i), 
+    .mem_ack_i   (mem_ack_i),     
+    .mem_data_o  (mem_data), 
+    .mem_addr_o  (mem_addr),     
+    .mem_enable_o    (mem_enable), 
+    .mem_write_o     (mem_write), 
+    .cpu_data_i  (RS2data_EXMEMtoDM), 
+    .cpu_addr_i  (ALUResult_EX_MEMtoDM),     
+    .cpu_MemRead_i   (MemRead_EX_MEMtoDM), 
+    .cpu_MemWrite_i  (MemWrite_EX_MEMtoDM), 
+    .cpu_data_o  (dcache_readData),
+    .cpu_stall_o     (MemStall)
 );
 
 endmodule
