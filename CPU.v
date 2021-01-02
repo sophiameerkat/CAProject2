@@ -211,7 +211,7 @@ ID_EX ID_EX(
     //others
     .funct_i     (Funct_IF_IDtoID_EX),
     .imm_i   (SignExtensionOut),
-    .MemStall_i   (MemStall)
+    .MemStall_i   (MemStall),
 
     .start_o    (start_ID_EXtoEX_MEM),
     .RegWrite_o  (RegWrite_ID_EXtoEX_MEM),
