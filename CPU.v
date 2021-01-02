@@ -16,9 +16,9 @@ input               clk_i;
 input               rst_i;
 input               start_i;
 //Project 2
-input               mem_data_i;
+input  [255:0]      mem_data_i;
 input               mem_ack_i;     
-output               mem_data_o;
+output [255:0]       mem_data_o;
 output               mem_addr_o;     
 output               mem_enable_o;
 output               mem_write_o;
