@@ -29,9 +29,10 @@ output             hit_o;
 // Memory
 reg      [24:0]    tag [0:15][0:1];    
 reg      [255:0]   data[0:15][0:1];
+reg      last[0:15];
+reg      isFilled[0:15][0:1];
 
 integer            i, j;
-integer last;
 
 // Write Data      
 // 1. Write hit
@@ -47,26 +48,28 @@ always@(posedge clk_i or posedge rst_i) begin
     end
     if (enable_i && write_i) begin
         // TODO: Handle your write of 2-way associative cache + LRU here
-        if (data[addr_i][0] == 0) begin //block 0 is available to use
+        if (isFilled[addr_i][0] == 0) begin //block 0 is available to use
             data[addr_i][0] <= data_i;
             tag[addr_i][0] <= tag_i[22:0];
-            last = 0;
+            last[addr_i] <= 0;
+            isFilled[addr_i][0] <= 1;
         end
-        else if (data[addr_i][1] == 0) begin //block 1 is available to use
+        else if (isFilled[addr_i][1] == 0) begin //block 1 is available to use
             data[addr_i][1] <= data_i;
             tag[addr_i][1] <= tag_i[22:0];
-            last = 1;
+            last[addr_i] <= 1;
+            isFilled[addr_i][1] <= 1;
         end
         else begin //block 0 and 1 are not available to use => LRU
-            if (last == 1) begin
+            if (last[addr_i] == 1) begin
                 data[addr_i][0] <= data_i;
                 tag[addr_i][0] <= tag_i[22:0];
-                last = 0;
+                last[addr_i] <= 0;
             end
             else begin
                 data[addr_i][1] <= data_i;
                 tag[addr_i][1] <= tag_i[22:0];
-                last = 1;
+                last[addr_i] <= 1;
             end
         end
     end
