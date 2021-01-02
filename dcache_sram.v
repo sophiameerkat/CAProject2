@@ -43,6 +43,7 @@ always@(posedge clk_i or posedge rst_i) begin
             for (j=0;j<2;j=j+1) begin
                 tag[i][j] <= 25'b0;
                 data[i][j] <= 256'b0;
+                isFilled[i][j] <= 1'b0;
             end
         end
     end
@@ -50,25 +51,25 @@ always@(posedge clk_i or posedge rst_i) begin
         // TODO: Handle your write of 2-way associative cache + LRU here
         if (isFilled[addr_i][0] == 0) begin //block 0 is available to use
             data[addr_i][0] <= data_i;
-            tag[addr_i][0] <= tag_i[22:0];
+            tag[addr_i][0] <= tag_i;
             last[addr_i] <= 0;
             isFilled[addr_i][0] <= 1;
         end
         else if (isFilled[addr_i][1] == 0) begin //block 1 is available to use
             data[addr_i][1] <= data_i;
-            tag[addr_i][1] <= tag_i[22:0];
+            tag[addr_i][1] <= tag_i;
             last[addr_i] <= 1;
             isFilled[addr_i][1] <= 1;
         end
         else begin //block 0 and 1 are not available to use => LRU
             if (last[addr_i] == 1) begin
                 data[addr_i][0] <= data_i;
-                tag[addr_i][0] <= tag_i[22:0];
+                tag[addr_i][0] <= tag_i;
                 last[addr_i] <= 0;
             end
             else begin
                 data[addr_i][1] <= data_i;
-                tag[addr_i][1] <= tag_i[22:0];
+                tag[addr_i][1] <= tag_i;
                 last[addr_i] <= 1;
             end
         end
@@ -79,12 +80,12 @@ end
 // TODO: tag_o=? data_o=? hit_o=?
 
 assign data_o = (enable_i == 0) ? 256'b0 : 
-        ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) ? data[addr_i][0] : // valid bit of the input == 1 and tag of input == tag address for block 0
-            ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1]) ? data[addr_i][1] : 256'b0)); // valid bit of the input == 1 and tag of input == tag address for block 1
+        ((tag_i[24] == 1 && tag[addr_i][0][24] == 1 && tag_i[22:0] == tag[addr_i][0]) ? data[addr_i][0] : // valid bit of the input == 1 and tag of input == tag address for block 0
+            ((tag[24] == 1 && tag[addr_i][1][24] == 1 && tag_i[22:0] == tag[addr_i][1]) ? data[addr_i][1] : 256'b0)); // valid bit of the input == 1 and tag of input == tag address for block 1
 assign tag_o = (enable_i == 0) ? 25'b0 :
-        ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) ? {tag_i[24:23], tag[addr_i][0]} : // valid bit of the input == 1 and tag of input == tag address for block 0
-            ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1]) ? {tag_i[24:23], tag[addr_i][1]} : 25'b0)); // valid bit of the input == 1 and tag of input == tag address for block 1
+        ((tag_i[24] == 1 && tag[addr_i][0][24] == 1 && tag_i[22:0] == tag[addr_i][0]) ? tag[addr_i][0] : // valid bit of the input == 1 and tag of input == tag address for block 0
+            ((tag_i[24] == 1 && tag[addr_i][1][24] == 1 && tag_i[22:0] == tag[addr_i][1]) ? tag[addr_i][1] : 25'b0)); // valid bit of the input == 1 and tag of input == tag address for block 1
 assign hit_o = (enable_i == 0) ? 1'b0 :
-        (((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) || (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1])) ? 1'b1 : 1'b0);
+        (((tag_i[24] == 1 && tag[addr_i][0][24] == 1 && tag_i[22:0] == tag[addr_i][0]) || (tag_i[24] == 1 && tag[addr_i][1][24] == 1 && tag_i[22:0] == tag[addr_i][1])) ? 1'b1 : 1'b0);
 
 endmodule
