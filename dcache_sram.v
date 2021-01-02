@@ -82,6 +82,6 @@ assign tag_o = (enable_i == 0) ? 25'b0 :
         ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) ? {tag_i[24:23], tag[addr_i][0]} : // valid bit of the input == 1 and tag of input == tag address for block 0
             ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1]) ? {tag_i[24:23], tag[addr_i][1]} : 25'b0)); // valid bit of the input == 1 and tag of input == tag address for block 1
 assign hit_o = (enable_i == 0) ? 1'b0 :
-        ((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) || (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1])) ? 1'b1 : 1'b0;
+        (((tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][0]) || (tag_i[24] == 1 && tag_i[22:0] == tag[addr_i][1])) ? 1'b1 : 1'b0);
 
 endmodule
