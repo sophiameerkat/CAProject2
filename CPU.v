@@ -19,7 +19,7 @@ input               start_i;
 input  [255:0]      mem_data_i;
 input               mem_ack_i;     
 output [255:0]       mem_data_o;
-output               mem_addr_o;     
+output [31:0]        mem_addr_o;     
 output               mem_enable_o;
 output               mem_write_o;
 
@@ -375,7 +375,7 @@ assign mem_enable_o = mem_enable;
 assign mem_write_o = mem_write;
 
 
-dcache_controller dcache_controller(
+dcache_controller dcache(
     .clk_i  (clk_i), 
     .rst_i   (rst_i),    
     .mem_data_i  (mem_data_i), 
