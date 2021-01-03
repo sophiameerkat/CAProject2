@@ -72,6 +72,10 @@ initial begin
             CPU.dcache.dcache_sram.data[i][j] = 256'b0;
         end
     end
+
+    for(i=0; i<16; i=i+1) begin
+            CPU.dcache.dcache_sram.last[i] = 1'b1;
+    end
     // [D-CacheInitialization] DO NOT REMOVE THIS FLAG !!!
     
     // initialize Register File
@@ -114,7 +118,7 @@ initial begin
     
     // Load instructions into instruction memory
     // Make sure you change back to "instruction.txt" before submission
-    $readmemb("instruction.txt", CPU.Instruction_Memory.memory);
+    $readmemb("instruction_1.txt", CPU.Instruction_Memory.memory);
     
     // Open output file
     // Make sure you change back to "output.txt" before submission
