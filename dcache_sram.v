@@ -52,13 +52,13 @@ always @(posedge clk_i or posedge rst_i) begin
         if (last[addr_i] == 1'b1) begin
             data[addr_i][0] <= data_i;
             tag[addr_i][0][22:0] <= tag_i[22:0];
-            tag[addr_i][0][24:23] <= 2'b1;
+            tag[addr_i][0][24:23] <= 2'b11;
             last[addr_i] <= 1'b0;
         end
         else begin
             data[addr_i][1] <= data_i;
             tag[addr_i][1][22:0] <= tag_i[22:0];
-            tag[addr_i][1][24:23] <= 2'b1;
+            tag[addr_i][1][24:23] <= 2'b11;
             last[addr_i] <= 1'b1;
         end
     end
