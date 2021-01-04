@@ -9,7 +9,10 @@ module dcache_sram
     write_i,
     tag_o,
     data_o,
-    hit_o
+    hit_o,
+    debug_data0_o,
+    debug_data1_o,
+    debug_last_o,
 );
 
 // I/O Interface from/to controller
@@ -25,7 +28,6 @@ output   [24:0]    tag_o;
 output   [255:0]   data_o;
 output             hit_o;
 
-
 // Memory
 reg      [24:0]    tag [0:15][0:1];    
 reg      [255:0]   data[0:15][0:1];
@@ -34,6 +36,16 @@ reg      last[0:15];
 integer            i, j;
 
 wire block_hit[0:1];
+
+
+//debug
+output [255:0] debug_data0_o;
+output [255:0] debug_data1_o;
+output debug_last_o;
+assign debug_data0_o = data[0][0];
+assign debug_data1_o = data[0][1];
+assign debug_last_o = last[addr_i];
+
 
 // Write Data      
 // 1. Write hit
@@ -49,17 +61,31 @@ always @(posedge clk_i or posedge rst_i) begin
     end
     if (enable_i && write_i) begin
         // TODO: Handle your write of 2-way associative cache + LRU here
-        if (last[addr_i] == 1'b1) begin
-            data[addr_i][0] <= data_i;
-            tag[addr_i][0][22:0] <= tag_i[22:0];
-            tag[addr_i][0][24:23] <= 2'b11;
-            last[addr_i] <= 1'b0;
+        if(hit_o) begin
+            if(block_hit[0]) begin
+                data[addr_i][0] <= data_i;
+                tag[addr_i][0][24:23] <= 2'b11;
+                last[addr_i] <= 1'b0;
+            end
+            else begin
+                data[addr_i][1] <= data_i;
+                tag[addr_i][1][24:23] <= 2'b11;
+                last[addr_i] <= 1'b1;
+            end
         end
-        else begin
-            data[addr_i][1] <= data_i;
-            tag[addr_i][1][22:0] <= tag_i[22:0];
-            tag[addr_i][1][24:23] <= 2'b11;
-            last[addr_i] <= 1'b1;
+        else begin 
+            if (last[addr_i] == 1'b1) begin
+                data[addr_i][0] <= data_i;
+                tag[addr_i][0][22:0] <= tag_i[22:0];
+                tag[addr_i][0][24:23] <= 2'b11;
+                last[addr_i] <= 1'b0;
+            end
+            else begin
+                data[addr_i][1] <= data_i;
+                tag[addr_i][1][22:0] <= tag_i[22:0];
+                tag[addr_i][1][24:23] <= 2'b11;
+                last[addr_i] <= 1'b1;
+            end
         end
     end
 end
