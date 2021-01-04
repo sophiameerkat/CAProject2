@@ -107,18 +107,18 @@ initial begin
     CPU.EX_MEM.MemRead_o = 0;
     CPU.EX_MEM.MemWrite_o = 0;
     CPU.EX_MEM.rd_addr_o = 5'b0;
-    CPU.EX_MEM.ALUResult_o = 31'b0;
-    CPU.EX_MEM.MemData_o = 31'b0; 
+    CPU.EX_MEM.ALUResult_o = 32'b0;
+    CPU.EX_MEM.MemData_o = 32'b0; 
 
     CPU.MEM_WB.RegWrite_o = 0;
     CPU.MEM_WB.MemReg_o = 0;
     CPU.MEM_WB.rd_addr_o = 5'b0;
-    CPU.MEM_WB.data1_o = 31'b0;
-    CPU.MEM_WB.data2_o = 31'b0;
+    CPU.MEM_WB.data1_o = 32'b0;
+    CPU.MEM_WB.data2_o = 32'b0;
     
     // Load instructions into instruction memory
     // Make sure you change back to "instruction.txt" before submission
-    $readmemb("instruction_1.txt", CPU.Instruction_Memory.memory);
+    $readmemb("instruction_3.txt", CPU.Instruction_Memory.memory);
     
     // Open output file
     // Make sure you change back to "output.txt" before submission
