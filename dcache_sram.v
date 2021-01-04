@@ -42,10 +42,18 @@ wire block_hit[0:1];
 output [255:0] debug_data0_o;
 output [255:0] debug_data1_o;
 output debug_last_o;
+output [24:0] debug_tag0_o;
+output [24:0] debug_tag1_o;
+output debug_blkhit0_o;
+output debug_blkhit1_o;
+
 assign debug_data0_o = data[0][0];
 assign debug_data1_o = data[0][1];
 assign debug_last_o = last[addr_i];
-
+assign debug_tag0_o = tag[0][0];
+assign debug_tag1_o = tag[0][1];
+assign debug_blkhit0_o = block_hit[0];
+assign debug_blkhit1_o = block_hit[1];
 
 // Write Data      
 // 1. Write hit
@@ -77,13 +85,13 @@ always @(posedge clk_i or posedge rst_i) begin
             if (last[addr_i] == 1'b1) begin
                 data[addr_i][0] <= data_i;
                 tag[addr_i][0][22:0] <= tag_i[22:0];
-                tag[addr_i][0][24:23] <= 2'b11;
+                tag[addr_i][0][24:23] <= 2'b10;
                 last[addr_i] <= 1'b0;
             end
             else begin
                 data[addr_i][1] <= data_i;
                 tag[addr_i][1][22:0] <= tag_i[22:0];
-                tag[addr_i][1][24:23] <= 2'b11;
+                tag[addr_i][1][24:23] <= 2'b10;
                 last[addr_i] <= 1'b1;
             end
         end
@@ -98,16 +106,11 @@ assign block_hit[1] = ((tag[addr_i][1][24] == 1) && (tag_i[22:0] == tag[addr_i][
 
 assign data_o = (enable_i == 0) ? 256'b0 : 
         (block_hit[0] == 1) ? data[addr_i][0] : 
-        (block_hit[1] == 1) ? data[addr_i][1] : data[addr_i][last[addr_i]];
-/*
+        (block_hit[1] == 1) ? data[addr_i][1] : data[addr_i][~last[addr_i]];
+
 assign tag_o = (enable_i == 0) ? 25'b0 :
         (block_hit[0] == 1) ? tag[addr_i][0] : 
-        (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][last[addr_i]];
-*/
-assign tag_o = (enable_i == 0) ? 25'b0 :
-        (write_i && hit_o) ? {2'b10, tag_i[22:0]} :
-        (block_hit[0] == 1) ? tag[addr_i][0] : 
-        (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][last[addr_i]];
+        (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][~last[addr_i]];
 
 //assign hit = sram_valid & (cpu_tag == sram_tag);
 
