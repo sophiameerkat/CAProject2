@@ -99,10 +99,17 @@ assign block_hit[1] = ((tag[addr_i][1][24] == 1) && (tag_i[22:0] == tag[addr_i][
 assign data_o = (enable_i == 0) ? 256'b0 : 
         (block_hit[0] == 1) ? data[addr_i][0] : 
         (block_hit[1] == 1) ? data[addr_i][1] : data[addr_i][last[addr_i]];
-
+/*
 assign tag_o = (enable_i == 0) ? 25'b0 :
         (block_hit[0] == 1) ? tag[addr_i][0] : 
         (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][last[addr_i]];
+*/
+assign tag_o = (enable_i == 0) ? 25'b0 :
+        (write_i && hit_o) ? {2'b10, tag_i[22:0]} :
+        (block_hit[0] == 1) ? tag[addr_i][0] : 
+        (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][last[addr_i]];
+
+//assign hit = sram_valid & (cpu_tag == sram_tag);
 
 assign hit_o = (enable_i == 0) ? 1'b0 :
         ((block_hit[0] == 1) || (block_hit[1] == 1)) ? 1'b1 : 1'b0;
