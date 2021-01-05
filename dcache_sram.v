@@ -10,9 +10,6 @@ module dcache_sram
     tag_o,
     data_o,
     hit_o,
-    debug_data0_o,
-    debug_data1_o,
-    debug_last_o,
 );
 
 // I/O Interface from/to controller
@@ -96,6 +93,16 @@ always @(posedge clk_i or posedge rst_i) begin
             end
         end
     end
+    /*
+    if(enable_i && !write_i && hit_o) begin//read hit
+        if(block_hit[0]) begin
+            last[addr_i] <= 0;
+        end
+        else begin
+            last[addr_i] <= 1;
+        end
+    end
+    */
 end
 
 // Read Data      
@@ -111,8 +118,6 @@ assign data_o = (enable_i == 0) ? 256'b0 :
 assign tag_o = (enable_i == 0) ? 25'b0 :
         (block_hit[0] == 1) ? tag[addr_i][0] : 
         (block_hit[1] == 1) ? tag[addr_i][1] : tag[addr_i][~last[addr_i]];
-
-//assign hit = sram_valid & (cpu_tag == sram_tag);
 
 assign hit_o = (enable_i == 0) ? 1'b0 :
         ((block_hit[0] == 1) || (block_hit[1] == 1)) ? 1'b1 : 1'b0;
