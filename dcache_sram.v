@@ -93,8 +93,8 @@ always @(posedge clk_i or posedge rst_i) begin
             end
         end
     end
-    /*
-    if(enable_i && !write_i && hit_o) begin//read hit
+    
+    if(enable_i && !write_i && hit_o) begin //read hit
         if(block_hit[0]) begin
             last[addr_i] <= 0;
         end
@@ -102,7 +102,7 @@ always @(posedge clk_i or posedge rst_i) begin
             last[addr_i] <= 1;
         end
     end
-    */
+    
 end
 
 // Read Data      
